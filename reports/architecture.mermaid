@@ -1,52 +1,55 @@
 graph TD
-    %% Styling
+    %% Custom Styling
     classDef ingestion fill:#1e1b4b,stroke:#6366f1,stroke-width:2px,color:#fff;
     classDef lakehouse fill:#064e3b,stroke:#10b981,stroke-width:2px,color:#fff;
     classDef ml fill:#701a75,stroke:#d946ef,stroke-width:2px,color:#fff;
-    classDef service fill:#0f172a,stroke:#475569,stroke-width:2px,color:#fff;
-    classDef user fill:#7c2d12,stroke:#f97316,stroke-width:2px,color:#fff;
+    classDef service fill:#0f172a,stroke:#38bdf8,stroke-width:2px,color:#fff;
+    classDef user fill:#312e81,stroke:#a855f7,stroke-width:2px,color:#fff;
 
-    %% Data Ingestion Layer
-    subgraph Ingestion ["1. Data Ingestion Layer"]
-        API[Social Media APIs <br> Instagram / LinkedIn / YouTube]:::ingestion
-        Kafka[Apache Kafka Message Broker]:::ingestion
-        Airflow[Apache Airflow Scheduler]:::ingestion
-        API --> Kafka
+    %% 1. Ingestion Layer
+    subgraph Layer1["1. Data Ingestion Layer"]
+        APIs["Social Media APIs - Instagram / LinkedIn / YouTube"]:::ingestion
+        Kafka["Apache Kafka Message Streaming"]:::ingestion
+        Airflow["Apache Airflow Ingestion Scheduler"]:::ingestion
+        APIs --> Kafka
         Kafka --> Airflow
     end
 
-    %% Data Lakehouse Layer
-    subgraph Storage ["2. Data Lakehouse & Prep"]
-        S3[S3 Delta Lake / Object Storage]:::lakehouse
-        DBT[dbt Data Build Tool]:::lakehouse
+    %% 2. Storage & Lakehouse Layer
+    subgraph Layer2["2. Data Lakehouse & ETL"]
+        S3["AWS S3 Delta Lake - Raw Storage"]:::lakehouse
+        DBT["dbt - Data Transformation"]:::lakehouse
         Airflow --> S3
         S3 --> DBT
     end
 
-    %% Machine Learning Layer
-    subgraph ML ["3. ML Pipeline & Explainer"]
-        MLflow[MLflow Training Suite]:::ml
-        Registry[MLflow Model Registry]:::ml
+    %% 3. Machine Learning Layer
+    subgraph Layer3["3. Machine Learning & SHAP"]
+        MLflow["MLflow Model Training"]:::ml
+        Registry["MLflow Model Registry"]:::ml
+        SHAP["SHAP Localized Explainer"]:::ml
         DBT --> MLflow
         MLflow --> Registry
+        Registry --> SHAP
     end
 
-    %% Service Layer (FastAPI backend)
-    subgraph Serving ["4. API Serving & AI Layer"]
-        FastAPI[FastAPI Backend Server]:::service
-        Redis[Redis In-Memory Cache]:::service
-        Ollama[Ollama / Cloud LLM APIs]:::service
+    %% 4. API & AI Layer
+    subgraph Layer4["4. Backend Service & AI Layer"]
+        FastAPI["FastAPI Backend Server"]:::service
+        Redis["Redis Recommendation Cache"]:::service
+        Ollama["Ollama Local / Cloud LLM API"]:::service
         Registry --> FastAPI
+        SHAP --> FastAPI
         FastAPI <--> Redis
         FastAPI <--> Ollama
     end
 
-    %% User & Monitoring Layer
-    subgraph Presentation ["5. Presentation & Monitoring"]
-        Dashboard[HTML/CSS/JS Dashboard UI]:::user
-        Evidently[Evidently AI Model Monitor]:::user
-        FastAPI <--> Dashboard
+    %% 5. Frontend & Monitoring Layer
+    subgraph Layer5["5. Dashboard & Monitoring"]
+        Dashboard["HTML/CSS/JS Glassmorphic UI"]:::user
+        Evidently["Evidently AI Drift Monitor"]:::user
+        Auth["OAuth2 / JWT RBAC Security"]:::user
+        FastAPI <--> Auth
+        Auth <--> Dashboard
         FastAPI --> Evidently
     end
-
-    class Ingestion,Storage,ML,Serving,Presentation service;
