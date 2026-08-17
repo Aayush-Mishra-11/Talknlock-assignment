@@ -62,7 +62,19 @@ class RecommendationRequest(BaseModel):
 class FullAnalysisRequest(PostDraftRequest):
     top_n: Optional[int] = Field(3, example=3)
 
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+if os.path.exists(os.path.join(BASE_DIR, "static")):
+    app.mount("/static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static")
+
 @app.get("/")
+def read_root():
+    index_path = os.path.join(BASE_DIR, "index.html")
+    if os.path.exists(index_path):
+        return FileResponse(index_path)
+    return health_check()
+
 @app.get("/health")
 def health_check():
     return {
@@ -73,6 +85,7 @@ def health_check():
             "OpenAI API" if os.environ.get("OPENAI_API_KEY") else "Rule-based Engine / Ollama"
         )
     }
+
 
 @app.post("/predict")
 def predict_performance(draft: PostDraftRequest):
