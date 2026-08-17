@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: talknlock-backend
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: ALLOWED_ORIGINS
+        value: https://talknlock-assignment.vercel.app,http://localhost:3000
+      - key: GEMINI_API_KEY
+        sync: false
