@@ -1,6 +1,4 @@
-# Talknlock AI-Powered Marketing Intelligence System
-
-This repository contains the source code, analysis scripts, dashboard prototype, and technical documentation for the Talknlock AI/ML Intern Assignment.
+# AI-Powered Marketing Intelligence System
 
 The system combines a **Content Performance Predictive Model** (using a Scikit-Learn Decision Tree Regressor) and a **Content Recommender Engine** (using candidate parameter search and local SHAP explains) with a **Generative LLM Reasoning Layer** (integrating local Ollama or Cloud APIs) to help a digital marketing agency optimize content before publishing.
 
@@ -9,7 +7,7 @@ The system combines a **Content Performance Predictive Model** (using a Scikit-L
 ## 📂 Repository Structure
 
 ```
-talknlock-ai-assignment/
+CR/
 │
 ├── Dataset/
 │   └── synthetic_marketing_data.csv    # Generated 1,500 record dataset
